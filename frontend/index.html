@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Leftover Roulette – No Waste, Great Taste</title>
+    <!-- Bootstrap 5 + Icons + Font -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #fefae0; transition: background 0.3s, color 0.2s; }
+        body.dark-mode { background: #1e2a2e; color: #e9f5db; }
+        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15); }
+        .recipe-card { border-left: 6px solid #e9c46a; background: white; }
+        body.dark-mode .recipe-card { background: #2d3e40; border-left-color: #f4a261; }
+        .ingredient-chip { background: #e9c46a; color: #283618; font-weight: 500; padding: 6px 14px; border-radius: 40px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .ingredient-chip:hover { background: #f4a261; transform: scale(1.02); }
+        body.dark-mode .ingredient-chip { background: #2a9d8f; color: white; }
+        .btn-primary-custom { background: #e76f51; border: none; color: white; font-weight: 600; padding: 10px 24px; border-radius: 40px; transition: 0.2s; }
+        .btn-primary-custom:hover { background: #d65a31; transform: scale(0.98); }
+        .btn-outline-custom { border: 2px solid #e76f51; background: transparent; color: #e76f51; border-radius: 40px; font-weight: 500; }
+        body.dark-mode .btn-outline-custom { border-color: #f4a261; color: #f4a261; }
+        .loading-spinner { width: 48px; height: 48px; border: 5px solid #e9c46a; border-top: 5px solid #e76f51; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .footer { background: #ccd5ae; color: #283618; padding: 20px 0; margin-top: 50px; }
+        body.dark-mode .footer { background: #264653; color: #e9f5db; }
+        input, textarea { background-color: #fffcf0; border: 1px solid #e9c46a; }
+        body.dark-mode input, body.dark-mode textarea { background-color: #3a5a40; border-color: #588157; color: white; }
+        input:focus, textarea:focus { box-shadow: 0 0 0 3px rgba(233,196,106,0.4); border-color: #e76f51; }
+        h1, h2, h3 { font-weight: 700; }
+        .hero-gradient { background: linear-gradient(135deg, #fefae0 0%, #faedcd 100%); }
+        body.dark-mode .hero-gradient { background: linear-gradient(135deg, #1e2a2e 0%, #2d3e40 100%); }
+        .modal-body { max-height: 60vh; overflow-y: auto; }
+        /* Dark mode text fixes */
+        body.dark-mode .recipe-card .card-title,
+        body.dark-mode .recipe-card .card-text,
+        body.dark-mode .recipe-card .btn {
+            color: #e9f5db !important;
+        }
+        body.dark-mode .modal-content,
+        body.dark-mode .modal-body,
+        body.dark-mode .modal-header,
+        body.dark-mode .modal-footer {
+            background-color: #2d3e40 !important;
+            color: #e9f5db !important;
+        }
+        body.dark-mode .modal-body p,
+        body.dark-mode .modal-body li,
+        body.dark-mode .modal-body h1,
+        body.dark-mode .modal-body h2,
+        body.dark-mode .modal-body h3,
+        body.dark-mode .modal-body strong {
+            color: #e9f5db !important;
+        }
+        body.dark-mode .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+        body.dark-mode .alert-info {
+            background-color: #264653;
+            color: #e9f5db;
+            border-color: #2a9d8f;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            margin-right: 10px;
+        }
+        @media (max-width: 576px) {
+            .logo-img { height: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-3 d-flex align-items-center" href="#">
+            <img src="logoleft.png" alt="Leftover Roulette Logo" class="logo-img">
+            Leftover Roulette
+        </a>
+        <div class="ms-auto">
+            <button id="darkModeToggle" class="btn btn-outline-custom rounded-circle p-2" style="width: 42px; height: 42px;">
+                <i class="bi bi-moon-fill"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="hero-gradient py-5 mb-4">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold">🍲 Turn bits & pieces into deliciousness</h1>
+        <p class="lead mt-3">Got random leftovers? Our AI chef whips up realistic recipes using ONLY what you have. Zero waste, pure creativity.</p>
+        <div class="mt-4">
+            <span class="badge bg-warning text-dark p-2 mx-1">🥕 Save money</span>
+            <span class="badge bg-warning text-dark p-2 mx-1">♻️ Reduce waste</span>
+            <span class="badge bg-warning text-dark p-2 mx-1">✨ Surprise meals</span>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 p-4" style="background: rgba(255,255,240,0.9); backdrop-filter: blur(2px);">
+                <div class="card-body">
+                    <label class="form-label fw-semibold fs-5"><i class="bi bi-basket"></i> What's in your fridge / pantry?</label>
+                    <div class="input-group mb-3">
+                        <input type="text" id="ingredientInput" class="form-control form-control-lg" placeholder="e.g., onion, carrot, canned tuna, tortillas, apple" value="onion, carrot, tuna, tortillas">
+                        <button id="cookBtn" class="btn btn-primary-custom btn-lg">Cook <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                    <div class="mt-3">
+                        <span class="text-muted me-2">Quick add:</span>
+                        <div id="quickChips" class="d-flex flex-wrap gap-2 mt-2">
+                            <span class="ingredient-chip" data-ing="rice, egg, soy sauce"><i class="bi bi-egg-fried"></i> Fried rice base</span>
+                            <span class="ingredient-chip" data-ing="tomato, pasta, garlic"><i class="bi bi-tomato"></i> Pasta night</span>
+                            <span class="ingredient-chip" data-ing="potato, onion, butter"><i class="bi bi-cup-straw"></i> Potato mash</span>
+                            <span class="ingredient-chip" data-ing="canned beans, tortilla, cheese"><i class="bi bi-cake2"></i> Bean burritos</span>
+                        </div>
+                    </div>
+                    <div id="loadingArea" class="text-center my-4" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <p class="mt-2 text-secondary">AI is mixing flavours... 🧑‍🍳</p>
+                    </div>
+                    <div id="resultsArea" class="mt-4"></div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button id="surpriseBtn" class="btn btn-outline-custom px-4 py-2"><i class="bi bi-dice-5"></i> Surprise me with a random ingredient set</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer text-center">
+    <div class="container">
+        <p class="mb-0"><i class="bi bi-robot"></i> AI powered by Groq Llama 3.3 • No waste, just taste</p>
+    </div>
+</footer>
+
+<script>
+    // Replace with your actual Render backend URL after deployment
+    const BACKEND_URL = "https://your-backend.onrender.com/recipes";  // UPDATE THIS
+    
+    const ingredientInput = document.getElementById('ingredientInput');
+    const cookBtn = document.getElementById('cookBtn');
+    const loadingArea = document.getElementById('loadingArea');
+    const resultsArea = document.getElementById('resultsArea');
+    const surpriseBtn = document.getElementById('surpriseBtn');
+
+    document.querySelectorAll('.ingredient-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            ingredientInput.value = chip.getAttribute('data-ing');
+        });
+    });
+
+    const surpriseSets = [
+        "eggs, milk, bread, cinnamon",
+        "canned chickpeas, spinach, lemon, garlic",
+        "zucchini, bell pepper, rice, onion",
+        "chicken thighs, coconut milk, curry powder",
+        "leftover pasta, cheese, butter, egg",
+        "banana, oats, peanut butter, honey",
+        "potato, cheese, sour cream, chives",
+        "canned tuna, mayo, apple, celery",
+        "pumpkin puree, onion, vegetable stock, cream",
+        "black beans, corn, tortilla chips, avocado"
+    ];
+    surpriseBtn.addEventListener('click', () => {
+        const randomSet = surpriseSets[Math.floor(Math.random() * surpriseSets.length)];
+        ingredientInput.value = randomSet;
+        fetchRecipes(randomSet);
+    });
+
+    async function fetchRecipes(ingredientsText) {
+        if (!ingredientsText.trim()) {
+            resultsArea.innerHTML = `<div class="alert alert-warning">Please enter some ingredients first 🥺</div>`;
+            return;
+        }
+        loadingArea.style.display = 'block';
+        resultsArea.innerHTML = '';
+        try {
+            const response = await fetch(BACKEND_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ingredients: ingredientsText })
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            displayRecipes(data.recipes);
+        } catch (error) {
+            resultsArea.innerHTML = `<div class="alert alert-danger">Oops! Couldn't reach the AI chef. ${error.message}<br>Make sure backend is running on ${BACKEND_URL}</div>`;
+        } finally {
+            loadingArea.style.display = 'none';
+        }
+    }
+
+    function displayRecipes(aiText) {
+        const recipeBlocks = [];
+        const lines = aiText.split('\n');
+        let currentBlock = [];
+        let inRecipe = false;
+        for (let line of lines) {
+            if (line.match(/^\d+\.\s+/)) {
+                if (currentBlock.length > 0) recipeBlocks.push(currentBlock.join('\n'));
+                currentBlock = [line];
+                inRecipe = true;
+            } else if (inRecipe) {
+                currentBlock.push(line);
+            }
+        }
+        if (currentBlock.length > 0) recipeBlocks.push(currentBlock.join('\n'));
+
+        if (recipeBlocks.length === 0) {
+            resultsArea.innerHTML = `<div class="card p-3"><pre>${escapeHtml(aiText)}</pre></div>`;
+            return;
+        }
+
+        let cardsHtml = `<div class="row g-4">`;
+        for (let i = 0; i < Math.min(recipeBlocks.length, 3); i++) {
+            const fullRecipe = recipeBlocks[i];
+            const firstLine = fullRecipe.split('\n')[0];
+            let title = firstLine.replace(/^\d+\.\s*/, '').replace(/\*\*/g, '');
+            const plainPreview = fullRecipe.replace(/\*\*/g, '').replace(/\n/g, ' ').substring(0, 150);
+            cardsHtml += `
+                <div class="col-md-6 col-lg-4">
+                    <div class="card recipe-card card-hover h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold"><i class="bi bi-file-earmark-check"></i> ${escapeHtml(title)}</h5>
+                            <p class="card-text mt-2 small">${escapeHtml(plainPreview)}${plainPreview.length >= 150 ? '...' : ''}</p>
+                            <button class="btn btn-sm btn-outline-custom mt-2 view-recipe-btn" data-full="${escapeHtml(fullRecipe)}">View full recipe <i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        cardsHtml += `</div><hr><div class="alert alert-info mt-3 small"><i class="bi bi-lightbulb"></i> Tip: You can ask for missing ingredient suggestions or swaps in the next version!</div>`;
+        resultsArea.innerHTML = cardsHtml;
+
+        document.querySelectorAll('.view-recipe-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const fullRaw = btn.getAttribute('data-full');
+                showRecipeModal(fullRaw);
+            });
+        });
+    }
+
+    function showRecipeModal(markdownText) {
+        const renderedHtml = marked.parse(markdownText);
+        const modalHtml = `
+            <div class="modal fade" id="recipeModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">🍽️ Full Recipe</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            ${renderedHtml}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        const existing = document.getElementById('recipeModal');
+        if (existing) existing.remove();
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = new bootstrap.Modal(document.getElementById('recipeModal'));
+        modal.show();
+        document.getElementById('recipeModal').addEventListener('hidden.bs.modal', function() { this.remove(); });
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    cookBtn.addEventListener('click', () => fetchRecipes(ingredientInput.value));
+    ingredientInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchRecipes(ingredientInput.value); });
+
+    const toggleBtn = document.getElementById('darkModeToggle');
+    toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const icon = toggleBtn.querySelector('i');
+        if (document.body.classList.contains('dark-mode')) {
+            icon.classList.remove('bi-moon-fill');
+            icon.classList.add('bi-sun-fill');
+        } else {
+            icon.classList.remove('bi-sun-fill');
+            icon.classList.add('bi-moon-fill');
+        }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
